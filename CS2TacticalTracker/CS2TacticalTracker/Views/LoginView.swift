@@ -11,6 +11,7 @@ struct LoginView: View {
     @State private var operatorID: String = ""
     @State private var accessKey : String = ""
     @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
+
     
     var body: some View {
         ZStack {
@@ -42,11 +43,30 @@ struct LoginView: View {
                     
                     VStack(spacing: 32){
                         CustomInputField(label: "OPERATOR ID", text: $operatorID, placeholder:"name@command.int")
-                        CustomInputField(label: "ACCESS KEY", text: $accessKey, placeholder: "*******")
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .keyboardType(.emailAddress)
+                        CustomSecureField(label: "ACCESS KEY", text: $accessKey, placeholder: "••••••••")
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
                     }
                     
                     VStack(spacing: 24) {
-                        Button(action: {isLoggedIn = true}) {
+                        Button(action: {
+                            Task {
+                                    do {
+                                        // Doar încercăm logarea
+                                        try await AuthService.shared.signIn(email: operatorID, pass: accessKey)
+                                        
+                                        print("--- ACCESS GRANTED: OPERATOR LEVEL ---")
+                                        
+                                        await MainActor.run {
+                                            isLoggedIn = true
+                                        }
+                                    } catch {
+                                        print("--- ACCESS DENIED: \(error.localizedDescription) ---")
+                                    }
+                                }                        }) {
                             Text("INITIALIZE CONNECTION")
                                 .font(.system(size: 12, weight: .bold))
                                 .tracking(2)

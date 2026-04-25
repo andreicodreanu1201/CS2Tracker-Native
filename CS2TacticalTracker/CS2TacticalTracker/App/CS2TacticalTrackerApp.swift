@@ -27,6 +27,6 @@ struct CS2TacticalTrackerApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(for:WeaponAsset.self)
     }
 }

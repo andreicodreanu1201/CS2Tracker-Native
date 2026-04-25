@@ -6,11 +6,7 @@ struct ContentView: View {
     var body: some View {
         Group {
             if isLoggedIn{
-                Text("ACTIVE DASHBOARD // WELCOME, OPERATOR!")
-                    .foregroundColor(.white)
-                    .onTapGesture {
-                        isLoggedIn = false
-                    }
+               MainDashboardView()
             } else {
                 NavigationStack{
                     LoginView()
@@ -21,6 +17,7 @@ struct ContentView: View {
         .animation(.easeInOut, value: isLoggedIn)
     }
 }
+
 
 #Preview {
     ContentView()

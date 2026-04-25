@@ -34,11 +34,38 @@ struct RegisterView: View {
 
                 VStack(spacing: 25) {
                     CustomInputField(label: "FULL NAME", text: $fullName, placeholder: "Operator Name")
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled(true)
                     CustomInputField(label: "ASSIGNED EMAIL", text: $operatorID, placeholder: "email@domain.com")
+                        .autocorrectionDisabled(true)
+                        .autocapitalization(.none)
+                        .keyboardType(.emailAddress)
                     CustomSecureField(label: "SECURITY KEY", text: $accessKey, placeholder: "••••••••")
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled(true)
+                    
                 }
 
-                Button(action: { dismiss() }) {
+                Button(action: {
+                    Task {
+                        do {
+                            // 1. Trimitem datele la Supabase
+                            try await AuthService.shared.signUp(
+                                email: operatorID,
+                                pass: accessKey,
+                                fullName: fullName
+                            )
+                            
+                            // 2. Dacă a reușit, ne întoarcem la Login
+                            await MainActor.run {
+                                dismiss() // Închide ecranul de register
+                            }
+                        } catch {
+                            print("EROARE REGISTER: \(error.localizedDescription)")
+                            // Aici poți adăuga o stare de alertă pentru utilizator
+                        }
+                    }
+                }) {
                     Text("CREATE OPERATOR ACCOUNT")
                         .font(.system(size: 12, weight: .bold))
                         .tracking(2)
