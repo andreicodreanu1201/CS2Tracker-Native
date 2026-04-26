@@ -14,6 +14,7 @@ internal import Combine
 class DashboardViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var alertMessage: String?
+    @Published var isSyncing: Bool = false
     
     // Funcția care aduce datele din API și le salvează în SwiftData
     func syncAssets(modelContext: ModelContext) async {
@@ -52,7 +53,7 @@ class DashboardViewModel: ObservableObject {
                     print("--- SUCCESS: DECODED \(apiSkins.count) ASSETS ---")
                     
                     // Salvăm datele
-                    for skin in apiSkins.prefix(20) {
+                    for skin in apiSkins.prefix(200) {
                         // Generăm un preț estimativ bazat pe raritate
                         let randomPrice: Double = {
                             switch skin.rarity?.name {
@@ -66,11 +67,12 @@ class DashboardViewModel: ObservableObject {
                         let newAsset = WeaponAsset(
                             id: skin.id,
                             name: skin.name,
-                            rarity: skin.rarity?.name ?? "Standard",
+                            rarity: skin.rarity?.name ?? "Unknown",
                             imageURL: skin.image,
                             collection: skin.collections?.first?.name ?? "Global Archive",
                             floatValue: Double.random(in: 0.001...0.08),
-                            price: randomPrice // <--- Aici inserăm prețul real/generat
+                            price: randomPrice,
+                            rarityColor: skin.rarity?.color ?? "#808080"
                         )
                         modelContext.insert(newAsset)
                     }
@@ -102,10 +104,13 @@ class DashboardViewModel: ObservableObject {
         
         struct RarityAPI: Codable {
             let name: String
+            let id: String
+            let color: String
         }
         
         struct CollectionAPI: Codable {
             let name: String
+            let id: String
         }
     }
 }

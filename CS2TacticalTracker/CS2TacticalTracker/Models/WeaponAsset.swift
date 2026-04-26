@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class WeaponAsset{
+class WeaponAsset {
     @Attribute(.unique) var id: String
     var name: String
     var rarity: String
@@ -18,16 +18,10 @@ class WeaponAsset{
     var floatValue: Double
     var isFavorite: Bool = false
     var price: Double = 0.0
-    
-    var rarityHexColor: String {
-        switch rarity.lowercased(){
-        case "covert": return "#ff7162"
-        case "classified": return "#ffd709"
-        default: return "#00e639"
-        }
-    }
-    
-    init(id: String, name: String, rarity: String, imageURL: String, collection: String, floatValue: Double, price: Double){
+    // Stocăm codul de culoare HEX primit direct din API (ex: "#eb4b4b")
+    var rarityColor: String
+
+    init(id: String, name: String, rarity: String, imageURL: String, collection: String, floatValue: Double, price: Double, rarityColor: String) {
         self.id = id
         self.name = name
         self.rarity = rarity
@@ -35,5 +29,6 @@ class WeaponAsset{
         self.collection = collection
         self.floatValue = floatValue
         self.price = price
+        self.rarityColor = rarityColor
     }
 }
