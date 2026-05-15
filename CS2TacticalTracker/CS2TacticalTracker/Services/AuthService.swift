@@ -40,6 +40,11 @@ class AuthService: ObservableObject {
         try await client.from("profiles").insert(profileData).execute()
     }
 
+    func updatePassword(newPassword: String) async throws {
+        let attributes = UserAttributes(password: newPassword)
+        try await client.auth.update(user: attributes)
+    }
+
     func signOut() async throws {
         try await client.auth.signOut()
         await MainActor.run { self.sessionUser = nil }

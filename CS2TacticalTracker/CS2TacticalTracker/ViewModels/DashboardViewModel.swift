@@ -52,8 +52,21 @@ class DashboardViewModel: ObservableObject {
                     
                     print("--- SUCCESS: DECODED \(apiSkins.count) ASSETS ---")
                     
+                    // Ștergem toate datele existente înainte de a insera cele noi
+                    let existingAssets = try modelContext.fetch(FetchDescriptor<WeaponAsset>())
+                    for old in existingAssets {
+                        modelContext.delete(old)
+                    }
+                    print("--- DATABASE CLEARED: \(existingAssets.count) OLD ASSETS REMOVED ---")
+                    
+                    // Amestecăm TOATE skinurile și extragem 200 random
+                    let shuffledSkins = apiSkins.shuffled()
+                    let selectedSkins = Array(shuffledSkins.prefix(200))
+                    
+                    print("--- SELECTED \(selectedSkins.count) RANDOM ASSETS ---")
+                    
                     // Salvăm datele
-                    for skin in apiSkins.prefix(200) {
+                    for skin in selectedSkins {
                         // Generăm un preț estimativ bazat pe raritate
                         let randomPrice: Double = {
                             switch skin.rarity?.name {

@@ -26,7 +26,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // Tab 1: Dashboard
-            MainDashboardView(goToDatabase: { withAnimation{selectedTab = 1}})
+            MainDashboardView()
                 .tag(0)
                 .tabItem {
                     Label("Dashboard", systemImage: "terminal")
@@ -40,10 +40,10 @@ struct MainTabView: View {
                 }
 
             // Tab 3: Settings
-//            SettingsView()
-//                .tabItem {
-//                    Label("Settings", systemImage: "gearshape.2")
-//                }
+        SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.2")
+                }
         }
         .accentColor(Color(hex: "#00e639")) // Culoarea verde tactică pentru tab-ul activ
         .onAppear {

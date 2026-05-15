@@ -12,10 +12,11 @@ struct WeaponryDatabaseView: View {
     //Accessing local database
     @Environment(\.modelContext) private var modelContext
     
-    //Query to bring all the weapons, sorted alphabetically
-    @Query(sort: \WeaponAsset.name) var assets: [WeaponAsset]
+    //Query to bring all the weapons (random order, no alphabetical sort)
+    @Query var assets: [WeaponAsset]
     
     @State private var searchText = ""
+    @State private var shuffledAssets: [WeaponAsset] = []
     
     var body: some View{
         NavigationStack{
@@ -62,13 +63,21 @@ struct WeaponryDatabaseView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
         }
+        .onAppear {
+            // Shuffle assets once when the view appears for random order display
+            shuffledAssets = assets.shuffled()
+        }
+        .onChange(of: assets.count) {
+            // Re-shuffle when the data changes (e.g., after sync)
+            shuffledAssets = assets.shuffled()
+        }
     }
     
     var filteredAssets: [WeaponAsset] {
         if searchText.isEmpty{
-            return assets
+            return shuffledAssets
         } else {
-            return assets.filter{ $0.name.localizedCaseInsensitiveContains(searchText)}
+            return shuffledAssets.filter{ $0.name.localizedCaseInsensitiveContains(searchText)}
         }
     }
 }
